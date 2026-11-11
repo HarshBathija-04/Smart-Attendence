@@ -1,8 +1,8 @@
 export type Inline = { text: string; bold: boolean }[];
-export type Block = { type: "p" | "h"; content: Inline } | { type: "ul"; items: Inline[] };
+type Block = { type: "p" | "h"; content: Inline } | { type: "ul"; items: Inline[] };
 
 /** Splits **bold** spans; everything else stays plain text (rendered via React, so no HTML injection). */
-export function parseInline(text: string): Inline {
+function parseInline(text: string): Inline {
   return text
     .split(/(\*\*[^*]+\*\*)/g)
     .filter(Boolean)

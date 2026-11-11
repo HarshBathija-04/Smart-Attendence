@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { FacePicker } from "../components/FaceCapture";
 import {
   Button,
+  ClassOptions,
   ConfirmDialog,
   EmptyState,
   ErrorState,
@@ -11,9 +12,9 @@ import {
   Modal,
   PageHeader,
   Select,
-  Skeleton,
+  SkeletonRows,
 } from "../components/ui";
-import { api, ApiError, qs, useApi } from "../lib/api";
+import { api, ApiError, errorMessage, qs, useApi } from "../lib/api";
 import type { ClassItem, Student } from "../lib/types";
 
 function AddStudentModal({
@@ -54,7 +55,7 @@ function AddStudentModal({
       close();
     } catch (err) {
       if (err instanceof ApiError && err.details) setErrors(err.details);
-      toast.error(err instanceof ApiError ? err.message : "Could not add student");
+      toast.error(errorMessage(err, "Could not add student"));
     } finally {
       setBusy(false);
     }
@@ -111,12 +112,7 @@ function AddStudentModal({
           <Field label="Class">
             {(p) => (
               <Select {...p} value={form.classId} onChange={set("classId")}>
-                <option value="">No class</option>
-                {classes.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.code} · {c.name}
-                  </option>
-                ))}
+                <ClassOptions classes={classes} empty="No class" />
               </Select>
             )}
           </Field>
@@ -174,7 +170,7 @@ function EnrollModal({
       onDone();
       close();
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Could not enroll the face");
+      toast.error(errorMessage(err, "Could not enroll the face"));
     } finally {
       setBusy(false);
     }
@@ -219,7 +215,7 @@ export default function Students() {
       setDeleting(null);
       students.reload();
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Could not remove student");
+      toast.error(errorMessage(err, "Could not remove student"));
     } finally {
       setBusyDelete(false);
     }
@@ -261,12 +257,7 @@ export default function Students() {
           value={classId}
           onChange={(e) => setClassId(e.target.value)}
         >
-          <option value="">All classes</option>
-          {classes.data?.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.code} · {c.name}
-            </option>
-          ))}
+          <ClassOptions classes={classes.data} />
         </Select>
       </div>
 
@@ -274,11 +265,7 @@ export default function Students() {
         {students.error && !students.data ? (
           <ErrorState message={students.error.message} onRetry={students.reload} />
         ) : students.loading && !students.data ? (
-          <div className="space-y-2 p-4" aria-busy>
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-12" />
-            ))}
-          </div>
+          <SkeletonRows />
         ) : list.length === 0 ? (
           filtered ? (
             <EmptyState icon={<Search className="size-5" />} title="No matching students">

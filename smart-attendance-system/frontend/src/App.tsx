@@ -1,8 +1,8 @@
 import { lazy, Suspense, useEffect, type ComponentType, type ReactNode } from "react";
-import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { Toaster, toast } from "sonner";
 import { AppShell, WakeBanner } from "./components/layout";
-import { Skeleton } from "./components/ui";
+import { ButtonLink, Skeleton } from "./components/ui";
 import { AuthProvider, useAuth } from "./lib/auth";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -59,12 +59,10 @@ function NotFound() {
       <div>
         <p className="font-mono text-sm text-accent-ink">404</p>
         <h1 className="mt-2 font-display text-3xl font-semibold">This page isn’t on the register</h1>
-        <Link
-          to="/"
-          className="mt-6 inline-flex h-10 items-center rounded bg-brand px-4 text-sm font-medium text-white"
-        >
+        <p className="mt-2 text-sm text-muted">The link may be old or mistyped.</p>
+        <ButtonLink to="/" className="mt-6">
           Go home
-        </Link>
+        </ButtonLink>
       </div>
     </div>
   );

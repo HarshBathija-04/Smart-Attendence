@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { ClipboardList, ScanFace, UserCheck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { EmptyState, ErrorState, Meter, PageHeader, Skeleton, StatusBadge } from "../components/ui";
+import { ButtonLink, EmptyState, ErrorState, Meter, PageHeader, Skeleton, StatusBadge } from "../components/ui";
 import { useApi } from "../lib/api";
 import { useAuth } from "../lib/auth";
 import { formatDay, formatTime, greeting, isWeekend } from "../lib/format";
@@ -85,18 +85,12 @@ export default function Dashboard() {
       }
       actions={
         <>
-          <Link
-            to="/app/roster"
-            className="inline-flex h-10 items-center gap-2 rounded border border-line bg-surface px-4 text-sm font-medium hover:border-ink/25"
-          >
+          <ButtonLink to="/app/roster" variant="secondary">
             <ClipboardList className="size-4" aria-hidden /> Open roster
-          </Link>
-          <Link
-            to="/app/check-in"
-            className="inline-flex h-10 items-center gap-2 rounded bg-brand px-4 text-sm font-medium text-white hover:bg-brand-strong"
-          >
+          </ButtonLink>
+          <ButtonLink to="/app/check-in">
             <ScanFace className="size-4" aria-hidden /> Start check-in
-          </Link>
+          </ButtonLink>
         </>
       }
     />
@@ -140,14 +134,7 @@ export default function Dashboard() {
           <EmptyState
             icon={<UserCheck className="size-5" />}
             title="No students yet"
-            action={
-              <Link
-                to="/app/students"
-                className="inline-flex h-10 items-center rounded bg-brand px-4 text-sm font-medium text-white"
-              >
-                Add students
-              </Link>
-            }
+            action={<ButtonLink to="/app/students">Add students</ButtonLink>}
           >
             Create a class and add students to start taking attendance.
           </EmptyState>

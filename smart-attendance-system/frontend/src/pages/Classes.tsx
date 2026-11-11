@@ -1,9 +1,9 @@
 import { ClipboardList, GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import {
   Button,
+  ButtonLink,
   ConfirmDialog,
   EmptyState,
   ErrorState,
@@ -13,7 +13,7 @@ import {
   PageHeader,
   Skeleton,
 } from "../components/ui";
-import { api, ApiError, useApi } from "../lib/api";
+import { api, ApiError, errorMessage, useApi } from "../lib/api";
 import type { ClassItem } from "../lib/types";
 
 type Draft = { id?: string; code: string; name: string; department: string };
@@ -39,11 +39,9 @@ function ClassForm({ draft, onClose, onSaved }: { draft: Draft | null; onClose: 
       onClose();
     } catch (err) {
       toast.error(
-        err instanceof ApiError
-          ? err.status === 409
-            ? "A class with that code already exists"
-            : err.message
-          : "Could not save class",
+        err instanceof ApiError && err.status === 409
+          ? "A class with that code already exists"
+          : errorMessage(err, "Could not save class"),
       );
     } finally {
       setBusy(false);
@@ -111,7 +109,7 @@ export default function Classes() {
       setDeleting(null);
       reload();
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Could not delete class");
+      toast.error(errorMessage(err, "Could not delete class"));
     } finally {
       setBusy(false);
     }
@@ -203,12 +201,9 @@ export default function Classes() {
                 <div className="mt-3">
                   <Meter value={pct} tone="auto" />
                 </div>
-                <Link
-                  to={`/app/roster?classId=${c.id}`}
-                  className="mt-5 inline-flex h-9 items-center justify-center gap-2 rounded border border-line text-sm font-medium hover:border-ink/25 hover:bg-sunken/60"
-                >
+                <ButtonLink to={`/app/roster?classId=${c.id}`} variant="secondary" className="mt-5">
                   <ClipboardList className="size-4" aria-hidden /> Open roster
-                </Link>
+                </ButtonLink>
               </li>
             );
           })}

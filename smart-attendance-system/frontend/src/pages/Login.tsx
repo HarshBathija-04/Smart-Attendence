@@ -3,7 +3,7 @@ import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Logo } from "../components/layout";
 import { Button, Field } from "../components/ui";
-import { ApiError } from "../lib/api";
+import { errorMessage } from "../lib/api";
 import { useAuth } from "../lib/auth";
 
 export default function Login() {
@@ -26,7 +26,7 @@ export default function Login() {
       await login(creds.username, creds.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : "Sign in failed, please try again");
+      setError(errorMessage(err, "Sign in failed, please try again"));
     } finally {
       setBusy(false);
     }
@@ -42,7 +42,7 @@ export default function Login() {
           </p>
           <p className="mt-4 text-sm text-muted">Face check-in, class rosters and reports in one place.</p>
         </div>
-        <p className="text-sm text-muted">Demo data resets itself and is safe to change.</p>
+        <p className="text-sm text-muted">The demo account is shared, so feel free to explore and edit.</p>
       </div>
 
       <div className="flex flex-col px-4 py-6 sm:px-6">

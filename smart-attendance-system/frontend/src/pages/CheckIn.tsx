@@ -4,8 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { CameraView } from "../components/FaceCapture";
-import { Button, PageHeader, Select } from "../components/ui";
-import { api, ApiError, useApi } from "../lib/api";
+import { Button, ClassOptions, PageHeader, Select } from "../components/ui";
+import { api, errorMessage, useApi } from "../lib/api";
 import { formatTime } from "../lib/format";
 import type { ClassItem, RecognizeResult } from "../lib/types";
 import { fileToDataUrl, useCamera } from "../lib/useCamera";
@@ -39,7 +39,7 @@ export default function CheckIn() {
         if (result.alreadyMarked) toast.info(`${result.student.name} was already checked in today`);
         else toast.success(`${result.student.name} checked in`);
       } catch (err) {
-        const message = err instanceof ApiError ? err.message : "Recognition failed, please try again";
+        const message = errorMessage(err, "Recognition failed, please try again");
         setLog((l) => [{ id, kind: "error" as const, message, at: new Date().toISOString() }, ...l].slice(0, 20));
         setFlash("error");
       } finally {
@@ -101,12 +101,7 @@ export default function CheckIn() {
                 Match against
               </label>
               <Select id="class-filter" value={classId} onChange={(e) => setClassId(e.target.value)}>
-                <option value="">All classes</option>
-                {classes.data?.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.code} · {c.name}
-                  </option>
-                ))}
+                <ClassOptions classes={classes.data} />
               </Select>
             </div>
             <div className="flex flex-1 gap-2 sm:justify-end">
@@ -119,7 +114,7 @@ export default function CheckIn() {
                 loading={busy}
                 disabled={state !== "ready"}
               >
-                {!busy && <ScanFace className="size-4" aria-hidden />} {busy ? "Recognising…" : "Check in"}
+                {!busy && <ScanFace className="size-4" aria-hidden />} {busy ? "Recognizing…" : "Check in"}
               </Button>
             </div>
           </div>
@@ -158,7 +153,7 @@ export default function CheckIn() {
             <div className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
               <Info className="mb-3 size-6 text-muted" aria-hidden />
               <p className="text-sm text-muted">
-                Check-ins will appear here. Only students with an enrolled face can be recognised;{" "}
+                Check-ins will appear here. Only students with an enrolled face can be recognized;{" "}
                 <Link to="/app/students" className="font-medium text-brand underline underline-offset-2">
                   enroll faces on the Students page
                 </Link>

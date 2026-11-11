@@ -9,7 +9,8 @@ import {
   type ReactNode,
   type SelectHTMLAttributes,
 } from "react";
-import type { Status } from "../lib/types";
+import { Link, type LinkProps } from "react-router-dom";
+import type { ClassItem, Status } from "../lib/types";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md";
@@ -25,11 +26,14 @@ const sizes: Record<Size, string> = {
   md: "h-10 gap-2 px-4 text-sm",
 };
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: Size;
   loading?: boolean;
 }
+
+const buttonBase =
+  "inline-flex select-none items-center justify-center whitespace-nowrap rounded font-medium transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55";
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   { variant = "primary", size = "md", loading, disabled, className, children, type = "button", ...rest },
@@ -41,12 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={clsx(
-        "inline-flex select-none items-center justify-center whitespace-nowrap rounded font-medium transition-[background-color,border-color,color,transform] duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55",
-        variants[variant],
-        sizes[size],
-        className,
-      )}
+      className={clsx(buttonBase, variants[variant], sizes[size], className)}
       {...rest}
     >
       {loading && <Loader2 className="size-4 animate-spin" aria-hidden />}
@@ -54,6 +53,30 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     </button>
   );
 });
+
+/** A router link styled as a Button, for navigation actions. */
+export function ButtonLink({
+  variant = "primary",
+  size = "md",
+  className,
+  ...rest
+}: LinkProps & { variant?: Variant; size?: Size }) {
+  return <Link className={clsx(buttonBase, variants[variant], sizes[size], className)} {...rest} />;
+}
+
+/** `<option>`s for a class picker, preceded by an "all" / "none" choice. */
+export function ClassOptions({ classes, empty = "All classes" }: { classes?: ClassItem[]; empty?: string }) {
+  return (
+    <>
+      <option value="">{empty}</option>
+      {classes?.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.code} · {c.name}
+        </option>
+      ))}
+    </>
+  );
+}
 
 export function Field({
   label,
@@ -108,6 +131,18 @@ export function Skeleton({ className }: { className?: string }) {
   return (
     <div className={clsx("relative overflow-hidden rounded bg-sunken", className)} aria-hidden>
       <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
+    </div>
+  );
+}
+
+/** Placeholder rows for a loading list or table. */
+export function SkeletonRows({ count = 6, className = "h-12" }: { count?: number; className?: string }) {
+  return (
+    <div className="space-y-2 p-4" aria-busy>
+      <span className="sr-only">Loading…</span>
+      {Array.from({ length: count }, (_, i) => (
+        <Skeleton key={i} className={className} />
+      ))}
     </div>
   );
 }

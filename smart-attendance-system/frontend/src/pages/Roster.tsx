@@ -1,10 +1,19 @@
 import clsx from "clsx";
 import { CheckCheck, ClipboardList, Save, ScanFace } from "lucide-react";
 import { useMemo, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
-import { Button, EmptyState, ErrorState, PageHeader, Select, Skeleton } from "../components/ui";
-import { api, ApiError, qs, useApi } from "../lib/api";
+import {
+  Button,
+  ButtonLink,
+  ClassOptions,
+  EmptyState,
+  ErrorState,
+  PageHeader,
+  Select,
+  SkeletonRows,
+} from "../components/ui";
+import { api, errorMessage, qs, useApi } from "../lib/api";
 import { formatTime, todayISO } from "../lib/format";
 import type { ClassItem, RosterRecord, Status } from "../lib/types";
 
@@ -60,7 +69,7 @@ export default function Roster() {
       setEdits({});
       roster.reload();
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Could not save the roster");
+      toast.error(errorMessage(err, "Could not save the roster"));
     } finally {
       setSaving(false);
     }
@@ -78,12 +87,9 @@ export default function Roster() {
         title="Roster"
         description="Review today’s register, fix mistakes and record late arrivals or absences."
         actions={
-          <Link
-            to="/app/check-in"
-            className="inline-flex h-10 items-center gap-2 rounded border border-line bg-surface px-4 text-sm font-medium hover:border-ink/25"
-          >
+          <ButtonLink to="/app/check-in" variant="secondary">
             <ScanFace className="size-4" aria-hidden /> Face check-in
-          </Link>
+          </ButtonLink>
         }
       />
 
@@ -93,12 +99,7 @@ export default function Roster() {
             Class
           </label>
           <Select id="roster-class" value={classId} onChange={(e) => setParam("classId", e.target.value)}>
-            <option value="">All classes</option>
-            {classes.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.code} · {c.name}
-              </option>
-            ))}
+            <ClassOptions classes={classes.data} />
           </Select>
         </div>
         <div className="sm:w-48">
@@ -128,23 +129,12 @@ export default function Roster() {
         {roster.error && !roster.data ? (
           <ErrorState message={roster.error.message} onRetry={roster.reload} />
         ) : roster.loading && !roster.data ? (
-          <div className="space-y-2 p-4" aria-busy>
-            {Array.from({ length: 6 }, (_, i) => (
-              <Skeleton key={i} className="h-12" />
-            ))}
-          </div>
+          <SkeletonRows />
         ) : records.length === 0 ? (
           <EmptyState
             icon={<ClipboardList className="size-5" />}
             title="No students in this class"
-            action={
-              <Link
-                to="/app/students"
-                className="inline-flex h-10 items-center rounded bg-brand px-4 text-sm font-medium text-white"
-              >
-                Add students
-              </Link>
-            }
+            action={<ButtonLink to="/app/students">Add students</ButtonLink>}
           />
         ) : (
           <>

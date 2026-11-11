@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, useSyncExternalStore } from "react";
 
-export const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:5128").replace(/\/$/, "");
+const API_URL = (import.meta.env.VITE_API_URL ?? "http://localhost:5128").replace(/\/$/, "");
 const TOKEN_KEY = "sa_token";
 
 export class ApiError extends Error {
@@ -36,14 +36,11 @@ const SLOW_AFTER_MS = 3500;
 let slowRequests = 0;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach((l) => l());
-export const wakeStore = {
-  subscribe: (l: () => void) => {
-    listeners.add(l);
-    return () => listeners.delete(l);
-  },
-  isWaking: () => slowRequests > 0,
+const subscribe = (l: () => void) => {
+  listeners.add(l);
+  return () => listeners.delete(l);
 };
-export const useServerWaking = () => useSyncExternalStore(wakeStore.subscribe, wakeStore.isWaking);
+export const useServerWaking = () => useSyncExternalStore(subscribe, () => slowRequests > 0);
 
 interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -99,6 +96,9 @@ export async function api<T>(
   }
   return data as T;
 }
+
+/** The server's message for an ApiError, otherwise `fallback`. */
+export const errorMessage = (err: unknown, fallback: string) => (err instanceof ApiError ? err.message : fallback);
 
 /** Fetches `path` (skips when null) and exposes loading/error/reload. */
 export function useApi<T>(path: string | null) {

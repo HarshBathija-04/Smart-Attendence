@@ -2,8 +2,17 @@ import clsx from "clsx";
 import { ArrowDownUp, BarChart3, Download, Sparkles } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Button, EmptyState, ErrorState, Meter, PageHeader, Select, Skeleton } from "../components/ui";
-import { api, ApiError, qs, useApi } from "../lib/api";
+import {
+  Button,
+  ClassOptions,
+  EmptyState,
+  ErrorState,
+  Meter,
+  PageHeader,
+  Select,
+  SkeletonRows,
+} from "../components/ui";
+import { api, errorMessage, qs, useApi } from "../lib/api";
 import { downloadCsv } from "../lib/csv";
 import { shiftISO, todayISO } from "../lib/format";
 import { parseMarkdown, type Inline } from "../lib/markdown";
@@ -101,7 +110,7 @@ export default function Reports() {
       });
       setInsight({ text: res.summary, key: queryKey });
     } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : "Could not generate insights");
+      toast.error(errorMessage(err, "Could not generate insights"));
     } finally {
       setThinking(false);
     }
@@ -142,12 +151,7 @@ export default function Reports() {
             Class
           </label>
           <Select id="r-class" value={classId} onChange={(e) => setClassId(e.target.value)}>
-            <option value="">All classes</option>
-            {classes.data?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.code} · {c.name}
-              </option>
-            ))}
+            <ClassOptions classes={classes.data} />
           </Select>
         </div>
         <div>
@@ -218,11 +222,7 @@ export default function Reports() {
         {report.error && !report.data ? (
           <ErrorState message={report.error.message} onRetry={report.reload} />
         ) : report.loading && !report.data ? (
-          <div className="space-y-2 p-4" aria-busy>
-            {Array.from({ length: 8 }, (_, i) => (
-              <Skeleton key={i} className="h-10" />
-            ))}
-          </div>
+          <SkeletonRows count={8} className="h-10" />
         ) : !rows.length ? (
           <EmptyState icon={<BarChart3 className="size-5" />} title="Nothing to report">
             There are no students in this selection.

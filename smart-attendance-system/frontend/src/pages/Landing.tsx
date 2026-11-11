@@ -8,8 +8,8 @@ import {
   Sparkles,
   UserPlus,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { Logo } from "../components/layout";
+import { ButtonLink } from "../components/ui";
 
 const REPO_URL = "https://github.com/HarshBathija-04/Smart-Attendence";
 
@@ -125,12 +125,9 @@ export default function Landing() {
           <a href="#features" className="hidden rounded px-3 py-2 text-muted hover:text-ink sm:inline-block">
             Features
           </a>
-          <Link
-            to="/login"
-            className="inline-flex h-9 items-center rounded bg-brand px-4 font-medium text-white hover:bg-brand-strong"
-          >
+          <ButtonLink to="/login" size="sm" className="h-9 px-4">
             Sign in
-          </Link>
+          </ButtonLink>
         </nav>
       </header>
 
@@ -145,19 +142,16 @@ export default function Landing() {
                 Roll call in seconds, <span className="text-brand">not ten minutes.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg text-muted">
-                Smart Attendance recognises students from a webcam, keeps an honest register for every class, and turns
+                Smart Attendance recognizes students from a webcam, keeps an honest register for every class, and turns
                 it into reports you can export or summarise.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <Link
-                  to="/login"
-                  className="inline-flex h-11 items-center gap-2 rounded bg-brand px-5 font-medium text-white shadow-raised transition-colors hover:bg-brand-strong"
-                >
+                <ButtonLink to="/login" className="h-11 px-5 text-base shadow-raised">
                   Open the live demo <ArrowRight className="size-4" aria-hidden />
-                </Link>
+                </ButtonLink>
                 <a
                   href={REPO_URL}
-                  className="inline-flex h-11 items-center rounded border border-line bg-surface px-5 font-medium hover:border-ink/25"
+                  className="inline-flex h-11 items-center rounded border border-line bg-surface px-5 font-medium transition-colors hover:border-ink/25 hover:bg-sunken/60"
                 >
                   View source
                 </a>
@@ -183,7 +177,9 @@ export default function Landing() {
                   <span className="grid size-10 place-items-center rounded bg-brand-soft text-brand">
                     <s.icon className="size-5" aria-hidden />
                   </span>
-                  <span className="font-display text-3xl font-semibold text-line">0{i + 1}</span>
+                  <span className="font-display text-3xl font-semibold text-line" aria-hidden>
+                    0{i + 1}
+                  </span>
                 </div>
                 <h3 className="mt-5 font-semibold">{s.title}</h3>
                 <p className="mt-2 text-sm text-muted">{s.body}</p>
