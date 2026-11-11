@@ -6,7 +6,6 @@ export class AppError extends Error {
   constructor(
     public status: number,
     message: string,
-    public details?: unknown,
   ) {
     super(message);
   }
@@ -16,34 +15,27 @@ export const notFound: RequestHandler = (req) => {
   throw new AppError(404, `Route not found: ${req.method} ${req.path}`);
 };
 
+// Body-parser failures (by `type`) and Postgres constraint violations (by SQLSTATE `code`).
+const KNOWN_ERRORS = new Map<string, [number, string]>([
+  ["entity.too.large", [413, "Request body is too large"]],
+  ["entity.parse.failed", [400, "Malformed JSON body"]],
+  ["23505", [409, "A record with these details already exists"]],
+  ["23503", [400, "Referenced record does not exist"]],
+  ["22P02", [400, "Invalid identifier"]],
+]);
+
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof ZodError) {
     res.status(400).json({ error: "Validation failed", details: z.flattenError(err).fieldErrors });
     return;
   }
   if (err instanceof AppError) {
-    res.status(err.status).json({ error: err.message, ...(err.details ? { details: err.details } : {}) });
+    res.status(err.status).json({ error: err.message });
     return;
   }
-  if (err?.type === "entity.too.large") {
-    res.status(413).json({ error: "Request body is too large" });
-    return;
-  }
-  if (err?.type === "entity.parse.failed") {
-    res.status(400).json({ error: "Malformed JSON body" });
-    return;
-  }
-  // Postgres constraint violations
-  if (err?.code === "23505") {
-    res.status(409).json({ error: "A record with these details already exists" });
-    return;
-  }
-  if (err?.code === "23503") {
-    res.status(400).json({ error: "Referenced record does not exist" });
-    return;
-  }
-  if (err?.code === "22P02") {
-    res.status(400).json({ error: "Invalid identifier" });
+  const known = KNOWN_ERRORS.get(err?.type) ?? KNOWN_ERRORS.get(err?.code);
+  if (known) {
+    res.status(known[0]).json({ error: known[1] });
     return;
   }
   console.error(err);

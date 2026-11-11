@@ -47,6 +47,9 @@ describe("health and auth", () => {
     const res = await request(app).post("/api/auth/login").send({});
     expect(res.status).toBe(400);
     expect(res.body.error).toBe("Validation failed");
+    const malformed = await request(app).post("/api/auth/login").set("Content-Type", "application/json").send("{");
+    expect(malformed.status).toBe(400);
+    expect(malformed.body.error).toBe("Malformed JSON body");
   });
 
   it("returns JSON 404s", async () => {

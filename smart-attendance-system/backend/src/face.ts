@@ -1,14 +1,9 @@
 import { config } from "./config";
 import { AppError } from "./errors";
 
-export interface EmbedResult {
+interface EmbedResult {
   embedding: number[];
   faces: number;
-}
-
-export interface Candidate {
-  id: string;
-  embedding: number[];
 }
 
 export function cosineSimilarity(a: number[], b: number[]): number {
@@ -27,7 +22,7 @@ export function cosineSimilarity(a: number[], b: number[]): number {
 /** Best candidate at or above the threshold, or null. */
 export function bestMatch(
   probe: number[],
-  candidates: Candidate[],
+  candidates: { id: string; embedding: number[] }[],
   threshold = config.FACE_MATCH_THRESHOLD,
 ): { id: string; score: number } | null {
   let best: { id: string; score: number } | null = null;

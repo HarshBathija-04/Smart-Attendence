@@ -34,7 +34,7 @@ function shiftDate(date: string, days: number): string {
 }
 
 /** A "session" is a day on which any attendance was taken for the student's class. */
-export async function buildReport(from: string, to: string, classId?: string): Promise<ReportRow[]> {
+async function buildReport(from: string, to: string, classId?: string): Promise<ReportRow[]> {
   const rows = await query<Omit<ReportRow, "absent" | "rate">>(
     `WITH sessions AS (
        SELECT s.class_id, count(DISTINCT a.date)::int AS n
