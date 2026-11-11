@@ -13,7 +13,7 @@ import { Link, type LinkProps } from "react-router-dom";
 import type { ClassItem, Status } from "../lib/types";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
-type Size = "sm" | "md";
+type Size = "sm" | "md" | "lg";
 
 const variants: Record<Variant, string> = {
   primary: "bg-brand text-white hover:bg-brand-strong shadow-[inset_0_1px_0_rgb(255_255_255/0.12)]",
@@ -24,6 +24,7 @@ const variants: Record<Variant, string> = {
 const sizes: Record<Size, string> = {
   sm: "h-8 gap-1.5 px-3 text-sm",
   md: "h-10 gap-2 px-4 text-sm",
+  lg: "h-11 gap-2 px-5 text-base",
 };
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

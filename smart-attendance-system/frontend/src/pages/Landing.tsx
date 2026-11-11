@@ -126,9 +126,7 @@ export default function Landing() {
           <a href="#features" className="hidden rounded px-3 py-2 text-muted hover:text-ink sm:inline-block">
             Features
           </a>
-          <ButtonLink to="/login" size="sm" className="h-9 px-4">
-            Sign in
-          </ButtonLink>
+          <ButtonLink to="/login">Sign in</ButtonLink>
         </nav>
       </header>
 
@@ -144,10 +142,10 @@ export default function Landing() {
               </h1>
               <p className="mt-5 max-w-xl text-lg text-muted">
                 Smart Attendance recognizes students from a webcam, keeps an honest register for every class, and turns
-                it into reports you can export or summarise.
+                it into reports you can export or summarize.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
-                <ButtonLink to="/login" className="h-11 px-5 text-base shadow-raised">
+                <ButtonLink to="/login" size="lg">
                   Open the live demo <ArrowRight className="size-4" aria-hidden />
                 </ButtonLink>
                 <a
