@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { aiClient } from "../ai";
+import { config } from "../config";
 import { query, today } from "../db";
 import { AppError } from "../errors";
 import { isoDate, uuid } from "../validation";
@@ -82,5 +83,5 @@ reportsRouter.post("/insights", async (req, res) => {
   if (!rows.length) throw new AppError(422, "No attendance was recorded in this period");
   const className = classId ? (rows[0].className ?? "the class") : "all classes";
   const summary = await aiClient.summarize({ from, to, className, rows: rows.slice(0, 200) });
-  res.json({ summary, model: "openai/gpt-oss-120b" });
+  res.json({ summary, model: config.GROQ_MODEL });
 });

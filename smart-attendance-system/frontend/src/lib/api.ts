@@ -49,12 +49,18 @@ interface RequestOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   signal?: AbortSignal;
+  /** The call is slow by nature (LLM), so a delay does not mean a cold start. */
+  expectSlow?: boolean;
 }
 
-export async function api<T>(path: string, { method = "GET", body, signal }: RequestOptions = {}): Promise<T> {
+export async function api<T>(
+  path: string,
+  { method = "GET", body, signal, expectSlow = false }: RequestOptions = {},
+): Promise<T> {
   const token = tokenStore.get();
   let slow = false;
   const timer = setTimeout(() => {
+    if (expectSlow) return;
     slow = true;
     slowRequests++;
     emit();

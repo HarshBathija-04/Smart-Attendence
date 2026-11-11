@@ -128,6 +128,12 @@ export function AppShell() {
   const location = useLocation();
   // eslint-disable-next-line react-hooks/set-state-in-effect -- close the drawer after navigation
   useEffect(() => setOpen(false), [location.pathname]);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <div className="min-h-dvh lg:pl-64">
@@ -168,6 +174,7 @@ export function AppShell() {
             <button
               type="button"
               onClick={() => setOpen(false)}
+              autoFocus
               className="absolute right-3 top-4 grid size-9 place-items-center rounded text-muted hover:bg-sunken"
               aria-label="Close menu"
             >
@@ -178,7 +185,11 @@ export function AppShell() {
         </div>
       )}
 
-      <main id="main" className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <main
+        id="main"
+        tabIndex={-1}
+        className="mx-auto w-full max-w-6xl px-4 py-6 focus:outline-none sm:px-6 lg:px-8 lg:py-8"
+      >
         <Outlet />
       </main>
     </div>

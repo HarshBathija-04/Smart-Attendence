@@ -97,6 +97,7 @@ export default function Reports() {
       const res = await api<{ summary: string }>("/api/reports/insights", {
         method: "POST",
         body: { from, to, ...(classId ? { classId } : {}) },
+        expectSlow: true,
       });
       setInsight({ text: res.summary, key: queryKey });
     } catch (err) {
