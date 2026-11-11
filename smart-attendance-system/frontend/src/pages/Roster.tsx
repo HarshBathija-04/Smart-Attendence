@@ -133,9 +133,11 @@ export default function Roster() {
         ) : records.length === 0 ? (
           <EmptyState
             icon={<ClipboardList className="size-5" />}
-            title="No students in this class"
+            title={classId ? "No students in this class" : "No students yet"}
             action={<ButtonLink to="/app/students">Add students</ButtonLink>}
-          />
+          >
+            Students you add appear here, ready to be marked present, late or absent.
+          </EmptyState>
         ) : (
           <>
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-4 py-3">

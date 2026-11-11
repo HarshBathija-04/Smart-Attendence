@@ -73,7 +73,7 @@
   }
 
   .input {
-    @apply h-10 w-full rounded border border-line bg-surface px-3 text-sm text-ink transition-colors placeholder:text-muted/70 hover:border-ink/25 focus:border-brand focus:shadow-focus focus:outline-none disabled:opacity-60;
+    @apply h-10 w-full rounded border border-line bg-surface px-3 text-sm text-ink transition-colors placeholder:text-muted hover:border-ink/25 focus:border-brand focus:shadow-focus focus:outline-none disabled:opacity-60;
   }
 
   .label {

@@ -91,22 +91,21 @@ export function FacePicker({ value, onChange }: { value: string | null; onChange
   return (
     <div>
       <div
-        role="tablist"
+        role="group"
         aria-label="Photo source"
         className="mb-3 inline-flex rounded border border-line bg-sunken p-0.5 text-sm"
       >
         {(["camera", "upload"] as const).map((m) => (
           <button
             key={m}
-            role="tab"
             type="button"
-            aria-selected={mode === m}
+            aria-pressed={mode === m}
             onClick={() => {
               setMode(m);
               onChange(null);
             }}
             className={clsx(
-              "h-8 rounded-[5px] px-3 font-medium capitalize transition-colors",
+              "h-8 rounded-[5px] px-3 font-medium transition-colors",
               mode === m ? "bg-surface text-ink shadow-card" : "text-muted hover:text-ink",
             )}
           >
@@ -150,7 +149,7 @@ export function FacePicker({ value, onChange }: { value: string | null; onChange
         >
           <ImageUp className="mb-3 size-8 text-brand" aria-hidden />
           <span className="font-medium">Choose a photo</span>
-          <span className="mt-1 text-sm text-muted">JPEG or PNG, one face, good lighting</span>
+          <span className="mt-1 text-sm text-muted">JPEG, PNG or WebP with one face in good light</span>
         </button>
       )}
       <input

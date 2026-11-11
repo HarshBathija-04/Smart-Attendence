@@ -65,7 +65,7 @@ export default function Login() {
             </div>
           )}
 
-          <form onSubmit={submit} className="mt-6 space-y-4" noValidate={false}>
+          <form onSubmit={submit} className="mt-6 space-y-4">
             <Field label="Username">
               {(p) => (
                 <input

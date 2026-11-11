@@ -78,7 +78,7 @@ function AddStudentModal({
       open={open}
       onClose={close}
       title="Add student"
-      description="Face enrollment is optional now; you can add it later."
+      description="Face enrollment is optional and can be added later. Only enroll people who have agreed to it."
       wide
     >
       <form onSubmit={submit} className="grid gap-5 md:grid-cols-2">
@@ -180,7 +180,7 @@ function EnrollModal({
       open={!!student}
       onClose={close}
       title={student?.faceEnrolled ? `Re-enroll ${student?.name}` : `Enroll ${student?.name ?? ""}`}
-      description="Capture one face, looking at the camera, in even light. Only the face embedding is stored."
+      description="Capture one face looking at the camera, in even light. Only enroll people who have agreed to it; the photo is discarded and only a face embedding is stored."
     >
       <FacePicker value={image} onChange={setImage} />
       <div className="mt-5 flex justify-end gap-2">
@@ -304,7 +304,7 @@ export default function Students() {
             </thead>
             <tbody className="divide-y divide-line">
               {list.map((s) => (
-                <tr key={s.id} className="hover:bg-sunken/40">
+                <tr key={s.id} className="transition-colors hover:bg-sunken/40">
                   <td className="max-w-0 px-4 py-3">
                     <p className="truncate font-medium">{s.name}</p>
                     <p className="truncate text-xs text-muted">
