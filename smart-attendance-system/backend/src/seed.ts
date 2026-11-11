@@ -110,7 +110,7 @@ export async function seed(): Promise<void> {
         studentId: s.id,
         date: day,
         status,
-        score: status === "absent" ? null : Math.round(55 + r * 40),
+        score: status === "absent" ? null : Math.round(72 + rand(`s:${s.roll_number}:${day}`) * 24),
         minute: (status === "late" ? 20 : 0) + Math.floor(rand(`m:${s.roll_number}:${day}`) * 18),
       });
     }
