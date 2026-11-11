@@ -1,0 +1,54 @@
+# Render Blueprint: two free web services. The Postgres database is shared and
+# created once by hand, so there is deliberately no `databases:` block.
+services:
+  - type: web
+    name: smart-attendance-api
+    runtime: node
+    plan: free
+    rootDir: smart-attendance-system/backend
+    buildCommand: npm ci --include=dev && npm run build
+    # Migrations and the demo seed are idempotent, so they run on every boot.
+    startCommand: npm run migrate && npm run seed && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DB_SCHEMA
+        value: smart_attendance
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false
+      - key: FACE_SERVICE_URL
+        sync: false
+      - key: FACE_SERVICE_TOKEN
+        fromService:
+          type: web
+          name: smart-attendance-face
+          envVarKey: FACE_SERVICE_TOKEN
+      - key: GROQ_API_KEY
+        sync: false
+      - key: APP_TIMEZONE
+        value: Asia/Kolkata
+      - key: SEED_DEMO_DATA
+        value: "true"
+
+  - type: web
+    name: smart-attendance-face
+    runtime: python
+    plan: free
+    rootDir: smart-attendance-system/face-service
+    buildCommand: pip install -r requirements.txt && python -m app.models
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT --workers 1 --proxy-headers
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.1
+      - key: ENV
+        value: production
+      - key: FACE_SERVICE_TOKEN
+        generateValue: true
